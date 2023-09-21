@@ -1,6 +1,7 @@
 class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[7.0]
   def change
-    
+    create_enum :profile, ["admin", "normal"]
+
     create_table(:users) do |t|
       ## Required
       t.string :provider, :null => false, :default => "email"
@@ -31,7 +32,7 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[7.0]
       ## User Info
       t.string :name
       t.string :email
-      t.integer :profile, default: 1
+      t.enum :profile, enum_type: "profile", default: "normal", null: false
 
       ## Tokens
       t.json :tokens

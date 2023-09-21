@@ -8,4 +8,6 @@ RSpec.describe SystemRequirement, type: :model do
   it { is_expected.to validate_presence_of(:cpu) }
   it { is_expected.to validate_presence_of(:memory) }
   it { is_expected.to validate_presence_of(:gpu) }
+
+  it { is_expected.to have_many(:games).dependent(:restrict_with_error) }
 end
