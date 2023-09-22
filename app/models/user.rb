@@ -6,4 +6,9 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   include DeviseTokenAuth::Concerns::User
+
+  enum profile: { admin: "admin", normal: "normal"}
+
+  validates :name, presence: true
+  validates :profile, presence: true, inclusion: { in: profiles.keys }
 end
