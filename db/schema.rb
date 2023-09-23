@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_22_205541) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_23_141838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
+  create_enum "coupon_status", ["active", "inactive"]
   create_enum "game_mode", ["pvp", "pve", "both"]
   create_enum "profile", ["admin", "normal"]
 
@@ -24,6 +25,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_22_205541) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "unique_categories", unique: true
+  end
+
+  create_table "coupons", force: :cascade do |t|
+    t.string "code"
+    t.enum "coupon_status", default: "inactive", null: false, enum_type: "coupon_status"
+    t.decimal "discount_value", precision: 5, scale: 2
+    t.integer "max_use"
+    t.datetime "due_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_coupons_on_code", unique: true
   end
 
   create_table "games", force: :cascade do |t|
