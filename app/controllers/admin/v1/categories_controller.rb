@@ -13,6 +13,15 @@ module Admin::V1
       end
     end
 
+    def update
+      @category = Category.find(params[:id])
+      if @category.update(category_params)
+        render :show
+      else
+        render_error(fields: @category.errors.messages)
+      end
+    end
+
     private
     def category_params
       params.require(:category).permit(:name)

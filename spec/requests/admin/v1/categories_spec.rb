@@ -60,4 +60,52 @@ RSpec.describe "Admin::V1::Categories", type: :request do
       end
     end
   end
+
+  context "PATCH /categories/:id" do
+    let(:category) { create(:category) }
+    let(:url) { "/admin/v1/categories/#{category.id}" }
+
+    context "with invalid params" do
+      let(:category_params) { { category: attributes_for(:category, name: nil) }.to_json }
+
+      it "should not update" do
+        old_name = category.name
+        patch url, headers: auth_header(user), params: category_params
+        category.reload
+        expect(category.name).to eq old_name
+      end
+
+      it "should return error message" do
+        patch url, headers: auth_header(user), params: category_params
+        expect(json_body['errors']['fields']).to have_key('name')
+      end
+
+      it "should return unprocessable entity status" do
+        patch url, headers: auth_header(user), params: category_params
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "with valid params" do
+      let(:category_name) { "My New Category Name" }
+      let(:category_params) { { category: attributes_for(:category, name: category_name) }.to_json }
+
+      it "should update" do
+        patch url, headers: auth_header(user), params: category_params
+        category.reload
+        expect(category.name).to eq category_name
+      end
+
+      it "should return updated json" do
+        patch url, headers: auth_header(user), params: category_params
+        category.reload
+        expect(json_body['category']).to eq category.as_json(only: %w(id name))
+      end
+
+      it "should return http status ok" do
+        patch url, headers: auth_header(user), params: category_params
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
 end
