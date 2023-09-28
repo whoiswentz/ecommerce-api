@@ -1,4 +1,7 @@
 class Product < ApplicationRecord
+  include Paginatable
+  include NameSearchable
+
   validates :name, presence: true
   validates :sku, presence: true, uniqueness: { case_sensitive: false }
   validates :description, presence: true
