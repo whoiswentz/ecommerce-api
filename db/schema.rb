@@ -56,6 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_24_205913) do
   end
 
   create_table "coupons", force: :cascade do |t|
+    t.string "name"
     t.string "code"
     t.enum "coupon_status", default: "inactive", null: false, enum_type: "coupon_status"
     t.decimal "discount_value", precision: 5, scale: 2

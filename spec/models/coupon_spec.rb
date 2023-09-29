@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Coupon, type: :model do
+  it_behaves_like "name searchable concern", :coupon
+  it_behaves_like "paginatable concern", :coupon
+
+  it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:code) }
   it { is_expected.to validate_uniqueness_of(:code).case_insensitive }
   it { is_expected.to validate_presence_of(:coupon_status) }
