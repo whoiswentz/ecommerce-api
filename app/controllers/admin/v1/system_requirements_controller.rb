@@ -1,6 +1,6 @@
 module Admin::V1
   class SystemRequirementsController < ApiController
-    before_action :find_system_requirement, only: [:update]
+    before_action :find_system_requirement, only: [:update, :destroy]
 
     def index
       @system_requirements = SystemRequirement.all
@@ -19,6 +19,14 @@ module Admin::V1
       if @system_requirement.update(system_requirement_params)
         render :show
       else
+        render_error(fields: @system_requirement.errors.messages)
+      end
+    end
+
+    def destroy
+      begin
+        @system_requirement.destroy
+      rescue
         render_error(fields: @system_requirement.errors.messages)
       end
     end
