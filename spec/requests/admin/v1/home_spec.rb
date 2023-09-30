@@ -7,6 +7,6 @@ describe "Home", type: :request do
     get "/admin/v1/home", headers: auth_header(user)
 
     expect(response).to have_http_status(200)
-    expect(json_body).to eq({'message' => 'ajskdajsdkajsk'})
+    expect(json_body).to eq({ 'message' => 'ajskdajsdkajsk' })
   end
 end

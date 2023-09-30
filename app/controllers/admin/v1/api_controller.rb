@@ -14,6 +14,7 @@ module Admin::V1
     end
 
     private
+
     def restrict_access_from_admin!
       raise ForbiddenError unless current_user.admin?
     end

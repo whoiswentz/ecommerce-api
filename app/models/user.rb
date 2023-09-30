@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   include Paginatable
   include NameSearchable
 
-  enum profile: { admin: "admin", normal: "normal"}
+  enum profile: { admin: "admin", normal: "normal" }
 
   validates :name, presence: true
   validates :profile, presence: true, inclusion: { in: profiles.keys }

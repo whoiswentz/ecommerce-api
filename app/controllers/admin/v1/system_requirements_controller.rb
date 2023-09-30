@@ -14,6 +14,7 @@ module Admin::V1
     end
 
     private
+
     def system_requirement_params
       params.require(:system_requirement).permit(:name, :os, :storage, :cpu, :memory, :gpu)
     end
