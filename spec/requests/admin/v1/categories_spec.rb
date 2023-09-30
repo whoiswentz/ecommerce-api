@@ -120,12 +120,12 @@ RSpec.describe "Admin::V1::Categories", type: :request do
         }.to change(Category, :count).by(-1)
       end
 
-      it "should return updated json" do
+      it "should not return json body" do
         delete url, headers: auth_header(user)
         expect(json_body).to_not be_present
       end
 
-      it "should return http status ok" do
+      it "should return http status no_content" do
         delete url, headers: auth_header(user)
         expect(response).to have_http_status(:no_content)
       end
