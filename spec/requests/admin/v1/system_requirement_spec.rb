@@ -62,7 +62,7 @@ RSpec.describe Admin::V1::SystemRequirementsController, type: :request do
     end
 
     context "with valid params" do
-      let(:name) { "New name"  }
+      let(:name) { "New name" }
       let(:params) { { system_requirement: attributes_for(:system_requirement, name: name) }.to_json }
 
       it "should update" do
@@ -86,7 +86,7 @@ RSpec.describe Admin::V1::SystemRequirementsController, type: :request do
 
   context "DELETE /system_requirements/:id" do
     let!(:system_requirement) { create(:system_requirement) }
-    let(:url) {"/admin/v1/system_requirements/#{system_requirement.id}"}
+    let(:url) { "/admin/v1/system_requirements/#{system_requirement.id}" }
 
     context "with valid id" do
       it "should delete" do
