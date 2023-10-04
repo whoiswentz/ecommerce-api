@@ -1,17 +1,89 @@
 require 'rails_helper'
 
-RSpec.describe "Admin::V1::Categories", type: :request do
+RSpec.describe Admin::V1::CategoriesController, type: :request do
   let(:user) { create(:user) }
 
   context "GET /categories" do
     let(:url) { "/admin/v1/categories" }
-    let!(:categories) { create_list(:category, 5) }
+    let!(:categories) { create_list(:category, 10) }
 
-    it "return all Categories" do
-      get url, headers: auth_header(user)
+    context "without any params" do
+      it "returns a total of 10 categories" do
+        get url, headers: auth_header(user)
+        expect(json_body['categories'].count).to eq 10
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(json_body['categories']).to contain_exactly *categories.as_json(only: %i(id name))
+      it "returns 10 first categories" do
+        get url, headers: auth_header(user)
+        expected = categories.as_json(only: %i(id name))
+        expect(json_body['categories']).to contain_exactly *expected
+      end
+
+      it "returns ok http status code" do
+        get url, headers: auth_header(user)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "with search[name] params" do
+      let(:search_params) { { search: { name: "Search" } } }
+      let!(:search_name_categories) do
+        categories = []
+        15.times { |n| categories << create(:category, name: "Search#{n + 1}") }
+        categories
+      end
+
+      it "returns only searched categories limited by default pagination" do
+        get url, headers: auth_header(user), params: search_params
+        expected = search_name_categories[0..9].map do |category|
+          category.as_json(only: %i(id name))
+        end
+        expect(json_body['categories']).to contain_exactly *expected
+      end
+
+      it "returns ok http status code" do
+        get url, headers: auth_header(user), params: search_params
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "with pagination params" do
+      let(:page) { 2 }
+      let(:length) { 5 }
+
+      let(:pagination_params) { { page: page, length: length } }
+
+      it "returns records sized by :length" do
+        get url, headers: auth_header(user), params: pagination_params
+        expect(json_body['categories'].count).to eq length
+      end
+
+      it "returns categories limited by pagination" do
+        get url, headers: auth_header(user), params: pagination_params
+        expected = categories[5..9].as_json(only: %i(id name))
+        expect(json_body['categories']).to contain_exactly *expected
+      end
+
+      it "returns success status" do
+        get url, headers: auth_header(user), params: pagination_params
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "with order params" do
+      let(:order_params) { { order: { name: 'desc' } } }
+
+      it "returns ordered categories limited by default pagination" do
+        get url, headers: auth_header(user), params: order_params
+        categories.sort! { |a, b| b[:name] <=> a[:name] }
+        expected = categories[0..9].as_json(only: %i(id name))
+        expect(json_body['categories']).to contain_exactly *expected
+      end
+
+      it "returns success status" do
+        get url, headers: auth_header(user), params: order_params
+        expect(response).to have_http_status(:ok)
+      end
     end
   end
 
