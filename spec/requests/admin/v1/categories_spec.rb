@@ -8,19 +8,18 @@ RSpec.describe Admin::V1::CategoriesController, type: :request do
     let!(:categories) { create_list(:category, 10) }
 
     context "without any params" do
+      before { get url, headers: auth_header(user) }
+
       it "returns a total of 10 categories" do
-        get url, headers: auth_header(user)
         expect(json_body['categories'].count).to eq 10
       end
 
       it "returns 10 first categories" do
-        get url, headers: auth_header(user)
         expected = categories.as_json(only: %i(id name))
         expect(json_body['categories']).to contain_exactly *expected
       end
 
       it "returns ok http status code" do
-        get url, headers: auth_header(user)
         expect(response).to have_http_status(:ok)
       end
     end
@@ -32,17 +31,14 @@ RSpec.describe Admin::V1::CategoriesController, type: :request do
         15.times { |n| categories << create(:category, name: "Search#{n + 1}") }
         categories
       end
+      before { get url, headers: auth_header(user), params: search_params }
 
       it "returns only searched categories limited by default pagination" do
-        get url, headers: auth_header(user), params: search_params
-        expected = search_name_categories[0..9].map do |category|
-          category.as_json(only: %i(id name))
-        end
+        expected = search_name_categories[0..9].map { |category| category.as_json(only: %i(id name)) }
         expect(json_body['categories']).to contain_exactly *expected
       end
 
       it "returns ok http status code" do
-        get url, headers: auth_header(user), params: search_params
         expect(response).to have_http_status(:ok)
       end
     end
@@ -50,22 +46,20 @@ RSpec.describe Admin::V1::CategoriesController, type: :request do
     context "with pagination params" do
       let(:page) { 2 }
       let(:length) { 5 }
-
       let(:pagination_params) { { page: page, length: length } }
 
+      before { get url, headers: auth_header(user), params: pagination_params }
+
       it "returns records sized by :length" do
-        get url, headers: auth_header(user), params: pagination_params
         expect(json_body['categories'].count).to eq length
       end
 
       it "returns categories limited by pagination" do
-        get url, headers: auth_header(user), params: pagination_params
         expected = categories[5..9].as_json(only: %i(id name))
         expect(json_body['categories']).to contain_exactly *expected
       end
 
       it "returns success status" do
-        get url, headers: auth_header(user), params: pagination_params
         expect(response).to have_http_status(:ok)
       end
     end
@@ -73,15 +67,15 @@ RSpec.describe Admin::V1::CategoriesController, type: :request do
     context "with order params" do
       let(:order_params) { { order: { name: 'desc' } } }
 
+      before { get url, headers: auth_header(user), params: order_params }
+
       it "returns ordered categories limited by default pagination" do
-        get url, headers: auth_header(user), params: order_params
         categories.sort! { |a, b| b[:name] <=> a[:name] }
         expected = categories[0..9].as_json(only: %i(id name))
         expect(json_body['categories']).to contain_exactly *expected
       end
 
       it "returns success status" do
-        get url, headers: auth_header(user), params: order_params
         expect(response).to have_http_status(:ok)
       end
     end
