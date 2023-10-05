@@ -1,10 +1,12 @@
 module Admin::V1
   class CategoriesController < ApiController
-    before_action :find_category, only: [:update, :destroy]
+    before_action :find_category, only: [:update, :destroy, :show]
 
     def index
       @categories = load_categories
     end
+
+    def show; end
 
     def create
       @category = Category.new(category_params)
