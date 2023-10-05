@@ -7,6 +7,7 @@ FactoryBot.define do
     image {
       Rack::Test::UploadedFile.new(Rails.root.join("spec/support/images/image.jpg"))
     }
+    product_status { Product::product_statuses.keys.sample }
 
     after :build do |product|
       product.producttable = create(:game)

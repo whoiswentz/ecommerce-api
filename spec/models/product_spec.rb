@@ -13,6 +13,11 @@ RSpec.describe Product, type: :model do
   it { is_expected.to have_many(:product_categories).dependent(:destroy) }
   it { is_expected.to have_many(:categories).through(:product_categories) }
   it { is_expected.to validate_presence_of(:image) }
+  it { is_expected.to validate_presence_of(:product_status) }
+  it { is_expected.to allow_values(:out_of_stock, :available).for(:product_status) }
+  it { is_expected.to define_enum_for(:product_status)
+                        .with_values(available: "available", out_of_stock: "out_of_stock")
+                        .backed_by_column_of_type(:enum) }
 
   it_behaves_like "paginatable concern", :product
   it_behaves_like "name searchable concern", :product
