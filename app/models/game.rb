@@ -5,5 +5,5 @@ class Game < ApplicationRecord
   validates :release_date, presence: true
   validates :developer, presence: true
   belongs_to :system_requirement
-  has_one :product, as: :producttable
+  has_one :product, as: :productable
 end

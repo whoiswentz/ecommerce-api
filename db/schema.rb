@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_05_190533) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_08_220030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -78,6 +78,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_190533) do
     t.index ["system_requirement_id"], name: "index_games_on_system_requirement_id"
   end
 
+  create_table "licences", force: :cascade do |t|
+    t.string "key"
+    t.bigint "game_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_licences_on_game_id"
+  end
+
   create_table "product_categories", force: :cascade do |t|
     t.bigint "product_id", null: false
     t.bigint "category_id", null: false
@@ -89,16 +97,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_190533) do
 
   create_table "products", force: :cascade do |t|
     t.string "name"
-    t.string "sku"
     t.text "description"
     t.decimal "price", precision: 10, scale: 2
-    t.string "producttable_type", null: false
-    t.bigint "producttable_id", null: false
+    t.string "productable_type", null: false
+    t.bigint "productable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.enum "product_status", default: "available", null: false, enum_type: "product_status"
-    t.index ["producttable_type", "producttable_id"], name: "index_products_on_producttable"
-    t.index ["sku"], name: "unique_products_sku", unique: true
+    t.index ["productable_type", "productable_id"], name: "index_products_on_productable"
   end
 
   create_table "system_requirements", force: :cascade do |t|
@@ -139,6 +145,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_05_190533) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "games", "system_requirements"
+  add_foreign_key "licences", "games"
   add_foreign_key "product_categories", "categories"
   add_foreign_key "product_categories", "products"
 end
