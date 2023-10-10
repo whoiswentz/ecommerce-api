@@ -18,6 +18,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_08_220030) do
   # Note that some types may not work with other database engines. Be careful if changing database.
   create_enum "coupon_status", ["active", "inactive"]
   create_enum "game_mode", ["pvp", "pve", "both"]
+  create_enum "license_platform", ["steam", "battle_net", "origin", "ps5", "xbox"]
+  create_enum "license_status", ["used", "available", "canceled", "pending_creation", "pending_cancellation"]
   create_enum "product_status", ["available", "out_of_stock"]
   create_enum "profile", ["admin", "normal"]
 
@@ -78,12 +80,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_08_220030) do
     t.index ["system_requirement_id"], name: "index_games_on_system_requirement_id"
   end
 
-  create_table "licences", force: :cascade do |t|
+  create_table "licenses", force: :cascade do |t|
     t.string "key"
+    t.enum "license_platform", null: false, enum_type: "license_platform"
+    t.enum "license_status", default: "pending_creation", enum_type: "license_status"
     t.bigint "game_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["game_id"], name: "index_licences_on_game_id"
+    t.index ["game_id"], name: "index_licenses_on_game_id"
+    t.index ["key", "license_platform"], name: "index_licenses_on_key_and_license_platform", unique: true
   end
 
   create_table "product_categories", force: :cascade do |t|
@@ -145,7 +150,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_08_220030) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "games", "system_requirements"
-  add_foreign_key "licences", "games"
+  add_foreign_key "licenses", "games"
   add_foreign_key "product_categories", "categories"
   add_foreign_key "product_categories", "products"
 end
