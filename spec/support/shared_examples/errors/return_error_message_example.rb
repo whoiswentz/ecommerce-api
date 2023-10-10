@@ -1,7 +1,5 @@
-shared_examples "return error message" do |keys|
-  keys.each do |key|
-    it "should return #{key} error" do
-      expect(json_body['errors']['fields']).to have_key(key)
-    end
+shared_examples "return error message" do |message|
+  it "should return error message" do
+    expect(json_body['errors']['message']).to eq message
   end
 end

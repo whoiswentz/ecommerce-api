@@ -13,6 +13,14 @@ module Admin::V1
       end
     end
 
+    def show
+      begin
+        @license = License.find(params[:id])
+      rescue ActiveRecord::RecordNotFound => e
+        raise NotFoundError
+      end
+    end
+
     private
 
     def license_params

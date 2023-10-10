@@ -42,8 +42,33 @@ RSpec.describe Admin::V1::LicensesController, type: :request do
 
       before { post url, headers: auth_header(user), params: params }
 
-      include_examples "return error message", ['game']
+      include_examples "return error fields", ['game']
       include_examples "unprocessable entity http status code"
+    end
+  end
+
+  context "GET /licenses/:id" do
+    context "with valid id" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id}" }
+
+      before { get url, headers: auth_header(user) }
+
+      it "should return the license" do
+        expect(json_body['license']).to eq license.as_json(only: %i(id key license_platform license_status))
+      end
+
+      include_examples "ok http status code"
+    end
+
+    context "id does not exists" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id + 1}" }
+
+      before { get url, headers: auth_header(user) }
+
+      include_examples "return error message", "Not found"
+      include_examples "not found http status code"
     end
   end
 end

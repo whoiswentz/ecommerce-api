@@ -3,6 +3,7 @@ module Admin::V1
     before_action :restrict_access_from_admin!
 
     class ForbiddenError < StandardError; end
+    class NotFoundError < StandardError; end
 
     include Authenticable
     include SimpleErrorRenderable
@@ -11,6 +12,10 @@ module Admin::V1
 
     rescue_from ForbiddenError do
       render_error(message: "Forbidden access", status: :forbidden)
+    end
+
+    rescue_from NotFoundError do
+      render_error(message: "Not found", status: :not_found)
     end
 
     private
