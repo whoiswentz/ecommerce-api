@@ -44,5 +44,7 @@ module EcommerceApi
     config.i18n.load_path += Dir[Rails.root.join('config/locales/**/*.{rb,yml}')]
 
     config.autoload_paths += %W["#{config.root}/app/validators/"]
+
+    config.active_job.queue_adapter = :sidekiq
   end
 end
