@@ -71,4 +71,70 @@ RSpec.describe Admin::V1::LicensesController, type: :request do
       include_examples "not found http status code"
     end
   end
+
+  context "PATCH /licenses/:id" do
+    context "with valid params" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id}" }
+      let(:params) { { license: { license_platform: "ps5" } }.to_json }
+
+      before { patch url, headers: auth_header(user), params: params }
+
+      it "should update the license" do
+        license.reload
+        expect(json_body['license']).to eq license.as_json(only: %i(id key license_platform license_status))
+      end
+
+      include_examples "ok http status code"
+    end
+
+    context "with invalid params" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id}" }
+      let(:params) { { license: { license_platform: nil } }.to_json }
+
+      before { patch url, headers: auth_header(user), params: params }
+
+      include_examples "return error fields", ["license_platform"]
+      include_examples "unprocessable entity http status code"
+    end
+
+    context "with invalid id" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id + 1}" }
+      let(:params) { { license: { license_platform: "ps5" } }.to_json }
+
+      before { patch url, headers: auth_header(user), params: params }
+
+      it "should not update license" do
+        license.reload
+        expect(license.license_platform).to eq "xbox"
+      end
+
+      include_examples "return error message", "Not found"
+      include_examples "not found http status code"
+    end
+  end
+
+  context "DELETE /licenses/:id" do
+    context "with valid id" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id}" }
+
+      before { delete url, headers: auth_header(user) }
+
+      include_examples "empty response body"
+      include_examples "not content http status code"
+    end
+
+    context "with invalid id" do
+      let!(:license) { create(:license) }
+      let(:url) { "/admin/v1/licenses/#{license.id + 1}" }
+
+      before { delete url, headers: auth_header(user) }
+
+      include_examples "return error message", "Not found"
+      include_examples "not found http status code"
+    end
+  end
 end
