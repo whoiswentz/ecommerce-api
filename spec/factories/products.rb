@@ -9,7 +9,7 @@ FactoryBot.define do
     product_status { Product::product_statuses.keys.sample }
 
     after :build do |product|
-      product.productable = create(:game)
+      product.productable ||= create(:game)
     end
   end
 end
