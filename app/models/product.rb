@@ -1,6 +1,7 @@
 class Product < ApplicationRecord
-  include Paginatable
+  include LikeSearchable
   include NameSearchable
+  include Paginatable
 
   enum product_status: {
     available: "available",
