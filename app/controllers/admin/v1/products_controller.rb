@@ -2,7 +2,8 @@ module Admin::V1
   class ProductsController < ApiController
     before_action :load_product, only: [:update, :show, :destroy]
     def index
-      @products = load_products
+      @loading_service = Admin::ModelLoadingService.new(Product.all, searchable_params)
+      @loading_service.call
     end
 
     def create
@@ -35,9 +36,9 @@ module Admin::V1
     end
 
     private
-    def load_products
-      permit = params.permit({ search: :name }, { order: {} }, :page, :length)
-      Admin::ModelLoadingService.new(Product.all, permit).call
+
+    def searchable_params
+      params.permit({ search: :name }, { order: {} }, :page, :length)
     end
 
     def load_product

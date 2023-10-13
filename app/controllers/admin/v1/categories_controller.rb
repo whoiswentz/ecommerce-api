@@ -3,7 +3,8 @@ module Admin::V1
     before_action :find_category, only: [:update, :destroy, :show]
 
     def index
-      @categories = load_categories
+      @loading_service = Admin::ModelLoadingService.new(Category.all, searchable_params)
+      @loading_service.call
     end
 
     def show; end
@@ -39,9 +40,8 @@ module Admin::V1
       params.require(:category).permit(:name)
     end
 
-    def load_categories
-      permit = params.permit({ search: :name }, { order: {} }, :page, :length)
-      Admin::ModelLoadingService.new(Category.all, permit).call
+    def searchable_params
+      params.permit({ search: :name }, { order: {} }, :page, :length)
     end
 
     def find_category
