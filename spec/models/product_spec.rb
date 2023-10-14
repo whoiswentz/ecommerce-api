@@ -19,4 +19,6 @@ RSpec.describe Product, type: :model do
 
   it_behaves_like "paginatable concern", :product
   it_behaves_like "name searchable concern", :product
+
+  it { expect(subject.featured).to be_falsey }
 end
