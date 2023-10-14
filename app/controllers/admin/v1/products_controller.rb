@@ -1,6 +1,7 @@
 module Admin::V1
   class ProductsController < ApiController
     before_action :load_product, only: [:update, :show, :destroy]
+
     def index
       @loading_service = Admin::ModelLoadingService.new(Product.all, searchable_params)
       @loading_service.call

@@ -1,6 +1,7 @@
 module Admin::V1
   class LicensesController < ApiController
     before_action :find_license_by_id, only: [:show, :update, :destroy]
+
     def index
       @licenses = License.all
     end
