@@ -15,7 +15,7 @@ class License < ApplicationRecord
     pending_cancellation: "pending_cancellation"
   }
 
-  validates :key, uniqueness: { case_sensitive: false, scope: :license_platform }
+  validates :key, uniqueness: { case_sensitive: false, scope: :license_platform }, allow_nil: true
   validates :license_platform, presence: true, inclusion: { in: license_platforms.keys }
   validates :license_status, presence: true, inclusion: { in: license_statuses.keys }
 

@@ -36,6 +36,18 @@ if Rails.env.development? || Rails.env.test?
         create(:product, name: game_name, product_status: availability,
                category_ids: game_categories_ids, productable: game)
       end
+
+      50.times do
+        game = Game.all[0..5].sample
+        status = License.license_statuses.keys.sample
+        platform = License.license_platforms.keys.sample
+
+        if status != "pending_creation"
+          create(:license, license_status: status, license_platform: platform, game: game)
+        else
+          create(:license, license_status: status, license_platform: platform, game: game, key: nil)
+        end
+      end
     end
   end
 end

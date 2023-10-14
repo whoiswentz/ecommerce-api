@@ -48,7 +48,7 @@ module Admin::V1
 
     def product_params
       permitted = params.require(:product)
-                        .permit(:id, :name, :description, :image, :price, :productable, :product_status, category_ids: [])
+                        .permit(:id, :name, :description, :image, :price, :productable, :product_status, :featured, category_ids: [])
       permitted.merge(productable_params)
     end
 
