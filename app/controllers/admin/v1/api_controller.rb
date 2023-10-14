@@ -3,6 +3,7 @@ module Admin::V1
     before_action :restrict_access_from_admin!
 
     class ForbiddenError < StandardError; end
+
     class NotFoundError < StandardError; end
 
     include Authenticable

@@ -7,15 +7,13 @@ RSpec.describe Admin::V1::UsersController, type: :request do
     let(:url) { "/admin/v1/users" }
     let!(:users) { create_list(:user, 5) }
 
-    it "should return all Users" do
-      get url, headers: auth_header(user)
+    before { get url, headers: auth_header(user) }
 
+    it "should return all Users" do
       expect(json_body['users']).to contain_exactly *users.as_json(only: %i(id name email profile))
     end
 
     it "should return status code ok" do
-      get url, headers: auth_header(user)
-
       expect(response).to have_http_status(:ok)
     end
   end
